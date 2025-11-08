@@ -1,0 +1,15 @@
+#!/usr/bin/env uix-shell
+with (import <nixpkgs> {  });
+let
+    command = "konsole";
+in
+mkShell {
+    packages = [
+        steam-run
+    ];
+
+  shellHook = ''
+    export TMPDIR=$UIX_SHELL_TMP
+    steam-run ${command}
+  '';
+}

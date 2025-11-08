@@ -1,0 +1,24 @@
+#!/usr/bin/env uix-shell
+with (import <nixpkgs> {  });
+mkShell {
+  packages = [
+    pixi
+    (python3.withPackages (python-pkgs: with python-pkgs; [
+      evdev
+    ]))
+    (vscode-with-extensions.override {
+        vscodeExtensions = with vscode-extensions; [
+            ms-vscode.hexeditor
+            tal7aouy.icons
+            jnoortheen.nix-ide
+            wmaurer.change-case
+            ms-python.python
+      ];
+    })
+  ];
+
+  shellHook = ''
+    export TMPDIR=$UIX_SHELL_TMP
+    code .
+  '';
+}
