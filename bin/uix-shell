@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+# TODO add help flag
+
+# TODO add search for latest uix files in the krunner and manager
+
+if [ "$#" -lt 1 ]; then
+  echo "Error: No shell path provided." >&2
+  exit 1
+fi
+
+## VARS
+
+SHELL_FILE="$1"
+
+FILE_CONTENT_NO_SHEBANG=`cat $1 | sed '1{/^#!/d}'`
+
+SCRIPT_PATH="$(dirname "$(readlink -f "$0")")"
+
+shell_path="$(dirname "$1")"
+shell_nonce=`echo -n "$shell_path" | sha256sum | awk '{print $1}' | base64 | head -c 8`
+
+TMP_DIRNAME="/tmp/uix-shell/$shell_nonce-$(basename $shell_path)"
+
+## EXPORTS
+
+export UIX_SHELL_TMP="$TMP_DIRNAME"
+
+# TODO add ask dialog for unfree packages
+export NIXPKGS_ALLOW_UNFREE=1
+
+## DEPS
+
+source "$SCRIPT_PATH/../share/deps.env"
+
+STDERR_PROCESSOR="$SCRIPT_PATH/../share/stderr-processor.sh"
+
+## MAIN
+
+mkdir -p "$TMP_DIRNAME"
+
+LOG_TIMESTAMP=`date +'%Y-%m-%d_%H-%M-%S'`
+LOG_FILE="$TMP_DIRNAME/nix-shell-err_$LOG_TIMESTAMP.log"
+
+nix-shell -E "$FILE_CONTENT_NO_SHEBANG" 2>"$LOG_FILE"
+
+# TODO remove empty log files
+
+SHELL_STATUS=$?
+
+if [ $SHELL_STATUS -ne 0 ]; then
+    ret_val=$("$NOTIFY_SEND" --action="default=View Log" --action="no=Ignore" "uix-shell" "nix-shell $SHELL_FILE failed to build")
+
+    if [ "$ret_val" = default ]; then
+        "$XDG_OPEN" "$LOG_FILE"
+    fi
+fi
+
+exit $SHELL_STATUS
