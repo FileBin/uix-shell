@@ -1,10 +1,10 @@
 # Uix shell
 
-Uix shell is wrapper around nix-shell, to working with it without terminal.
+Uix shell is wrapper around nix-shell, to work with it without terminal.
 
 ## Features
 
-* Reports build fail notifications using libnotify
+* Reports build fails with a notification using libnotify
 
 ## Planned
 
@@ -13,7 +13,7 @@ Uix shell is wrapper around nix-shell, to working with it without terminal.
 
 ## Usage
 
-First step is install uix-shell package to the home-manager (or system configuration if you need) 
+First step is to install uix-shell package with the home-manager (or system configuration if you need) 
 
 ```nix
 # home-manager.nix
@@ -44,7 +44,9 @@ Then you can change extension to `.sh` to execute it by double clicking from you
 
 ### Option 2. Mime type
 
-Add `text/x-uix` mime type tp your home manager
+> This way, the shell file will have a dedicated `nix-snowflake` icon 
+
+Add `text/x-uix` mime type to your home manager
 
 ```nix 
 # home-manager.nix
@@ -65,7 +67,6 @@ Add `text/x-uix` mime type tp your home manager
 
 Then you can change `shell.nix` extension to `.uix` and execute it by double clicking from your file manager
 
-Also it will diplay with `nix-snowflake` icon 
 
 ## Uix shell examples
 
